@@ -1,0 +1,27 @@
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+    boards: defineTable({
+        authorId: v.string(),
+        authorName: v.string(),
+        imgUrl: v.string(),
+        orgId: v.string(),
+        title: v.string(),
+    })
+        .index("by_org", ["orgId"])
+        .searchIndex("search_title", {
+            searchField: "title",
+            filterFields: ["orgId"],
+        }),
+
+    userFavorites: defineTable({
+        userId: v.string(),
+        boardId: v.id("boards"),
+        orgId: v.string(),
+    })
+        .index("by_board", ["boardId"])
+        .index("by_user_org", ["userId", "orgId"])
+        .index("by_user_board", ["userId", "boardId"])
+        .index("by_user_board_org", ["userId", "boardId", "orgId"]),
+});
